@@ -1,0 +1,830 @@
+## Conectando front ao Back
+
+1) Voltaremos ao código acessando a nossa IDE. Nela, abriremos o projeto `frontend`, 
+
+```bash
+npm install react-router-dom
+
+```
+
+2) Continuando em `frontend`vá ao arquivo index.js e adicione no import:
+
+```index.js
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+```
+
+
+- ***BrowserRouter*** é um componente do React Router que fornece o contexto de roteamento para a sua aplicação.
+Ele usa a API de histórico do navegador (History API) para manter a interface do usuário sincronizada com a URL.
+Esse componente deve envolver toda a sua aplicação React para que as rotas funcionem corretamente.
+Routes:
+
+- ***Routes*** é um componente do React Router que define o conjunto de rotas da sua aplicação. Ele é responsável por renderizar o componente correto com base na URL atual. Dentro do Routes, você define as diferentes rotas da sua aplicação usando o componente Route.
+
+- ***Route:*** O Route é o componente do React Router que define uma rota individual. Ele possui dois atributos principais:
+ -- `path`: define o caminho da URL que deve corresponder a essa rota.
+ -- `element`: define o componente React que deve ser renderizado quando essa rota for acessada.
+
+3) No mesmo arquivo vamos adicionar BrowserRouter, Routes e Route path..."
+
+
+
+ ```index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import { createGlobalStyle } from 'styled-components';
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+
+const GlobalStyle = createGlobalStyle`
+//código omitido
+`
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <GlobalStyle />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/favoritos" element={<p>Oi!</p>} />
+        <Route path="/" element={<App />} />
+      </Routes>
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+ ```
+
+ No terminal Rode o comando 
+
+ ```bash
+npm start
+ ```
+
+ Teste a rota 
+
+```
+http://localhost:3000/favoritos
+```
+
+
+## Criando rotas para aplicação
+
+4) Em Components | OptionsHeader acesse o arquivo `ìndex.js` 
+  - Digite o import `import { Link } from 'react-router-dom'`
+  - Envolva em uma tag  <Opcao><p>{texto}</p></Opcao> link conforme abaixo
+
+  ```OptionsHeader | index.js
+  
+import styled from 'styled-components'
+import { Link } from 'react-router-dom'
+
+const Opcoes = styled.ul`
+ //Texto omitido
+`
+const Opcao = styled.li`
+//Texto omitido
+
+const textoOpcoes = ['CATEGORIAS', 'FAVORITOS', 'MINHA ESTANTE']
+function OptionsHeader() {
+  return (
+    <Opcoes>
+      {textoOpcoes.map((texto) => (
+       <Link to="/favoritos" ><Opcao><p>{texto}</p></Opcao></Link>
+      ))}
+    </Opcoes>
+  )
+}
+
+export default OptionsHeader
+  ```
+
+Teste novamente 
+
+5) Retornando para Components | OptionsHeader acesse o arquivo `ìndex.js`  vamos ajustar a função map para  <Link to={`/${texto.toLowerCase()}`} ...  conforme abaixo
+
+
+  ```OptionsHeader | index.js 
+function OpcoesHeader() {
+    return(
+        <Opcoes>
+            { textoOpcoes.map( (texto) => (
+                <Link to={`/${texto.toLowerCase()}`} ><Opcao><p>{texto}</p></Opcao></Link>
+            ) ) }
+        </Opcoes>
+    )
+}
+  ```
+  Teste novamente
+
+
+6) ## Criando a página de favoritos
+
+ Note que o header com as opções deveria ser mantido em todas as nossas páginas. Ainda que estejamos na página "Favoritos", "Categorias" e "Estante", temos motivações para navegar para outra página ou voltar para página inicial.
+
+ - Retirar header da página `App.js`
+ - Inserir no arquivo `index.js` abaixo de  BrowserRouter
+
+``` App.js 
+//código omitido
+
+function App() {
+  return (
+    <AppContainer>
+      <Pesquisa />
+      <UltimosLancamentos />
+    </AppContainer>
+  );
+}
+```
+
+``` index.js
+
+import Header from './components/Header';
+// Código omitido
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <GlobalStyle />
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/favoritos" element={<p>Oi!</p>} />
+        <Route path="/" element={<App />} />
+      </Routes>
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+```
+
+Teste
+
+7) Vamos colocar link no logo Em Components | Header acesse o arquivo `ìndex.js` 
+
+Acrecente 
+
+```Header | ìndex.js
+
+import { Link } from "react-router-dom";
+//código omitido
+
+function Header() {
+    return (
+        <HeaderContainer>
+            <Link to="/">
+                <Logo/>
+            </Link>
+            <OpcoesHeader/>
+            <IconesHeader/>
+        </HeaderContainer>
+    )
+}
+```
+Teste
+
+8)   Note que temos um problema no nosso projeto, o app.js está fazendo a função da página principal então vamos renomeá-lo para home.js
+  - Clique no arquivo app.js e altere o nome da função para home
+
+```app.js
+function Home() {
+  return (
+    <AppContainer>
+      <Pesquisa />
+    </AppContainer>
+  );
+}
+```
+
+9) Retorne no index.js  e altere
+
+- apague o import App from './App';
+- Insira import Home from './App';
+- Na função que cria o Root  altere
+De <Route path="/" element={<App />} />
+Para <Route path="/" element={<Home />} />
+
+```index.js
+//codigo omitido
+import Header from './components/Header';
+import Home from './Home';
+
+// código omitido
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <GlobalStyle />
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/favoritos" element={<p>Oi!</p>} />
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+```
+
+10) Renomei o arquivo de `App.js` para `Home.js`
+
+11)  Em src | crie um pasta chamada `routes`
+
+12) Mova o arquivo `Home.js` para para `routes` 
+
+13) Duplique o arquivo `Home.js` e remonei para  `Favoritos.js` 
+
+14) Em `Favoritos.js` apague  o componete e o import <UltimosLancamentos /> e import UltimosLancamentos from '../components/UltimosLancamentos';
+
+15) Em `Favoritos.js` renomei a função home para `Favoritos`
+
+``` routes | Favoritos.js
+
+import styled from 'styled-components';
+import Pesquisa from '../components/Pesquisa';
+
+
+const AppContainer = styled.div ` 
+//codigo omitido
+`
+
+function Favoritos() {
+  return (
+    <AppContainer>
+      <Pesquisa />
+    </AppContainer>
+  );
+}
+
+export default Favoritos
+
+```
+
+16) Retorne em index.js e altere  a forma para chamar o componete `Favoritos`
+
+De:       <Route path="/favoritos" element={<p>Oi!</p>} />
+
+Para:    <Route path="/favoritos" element={<Favoritos/>} />
+
+não esqueça de importar - import Favoritos from './routes/Favoritos';
+
+```index.js
+//código omitido
+import Home from './routes/Home';
+import Favoritos from './routes/Favoritos';
+
+const GlobalStyle = createGlobalStyle`
+//codigo omitido 
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <GlobalStyle />
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/favoritos" element={<Favoritos />} />
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+```
+
+Teste as paginas home e o favoritos. Note que agora temos uma navegação funcional
+
+
+17) A nossa meta é começar a deixar de usar esses dados fixos, os quais podem ser chamados de "chumbados" no mercado, para usar dados reais e dinâmicos.
+
+Por isso, vamos ir ao código conhecer a ferramenta que vai nos possibilitar fazer requisições HTTP. Pois, como já aprendemos, precisamos fazer requisições HTTP como get, post e delete para fazer a comunicação com a API.
+
+### Instalando o Axios
+Para fazer requisições HTTP no código do front-end, vamos usar uma ferramenta muito útil e bem conhecida no mercado, o Axios.
+
+No terminal integrado do VSCode, estamos rodando a aplicação. Para parar a execução, vamos pressionar "Ctrl + C". Após liberar o terminal, podemos instalar a ferramenta Axios.
+
+```bash
+npm install axios
+```
+
+18) Em src crie uma nova pasta chamada `services`
+19) Em `services` crie o arquivo `livro.js` e digite 
+
+```livros.js
+import axios from "axios"
+
+const livrosAPI = axios.create({baseURL: "http://localhost:8000/livros"})
+
+function getLivros() {
+    const response = livrosAPI.get('/')
+    return response.data
+}
+
+export {
+    getLivros
+}
+```
+
+20) Agora nossa meta é utilizar os dados da nossa api criada no backend no nosso front para isso, lembre-se que os dados da pesquisa estão sendo acessos no front em um Input.  Acesse
+ 
+-  Em components  | Pesquisa | index.js 
+
+- Apague o import { livros } from "./dadosPesquisa";
+- Apague o console.log(livrosPesquisados)
+ - Acrescente: 
+
+ ```
+ // código omitido…
+import { useEffect } from "react";
+import { getLivros } from '../../service/livros.js'
+// código omitido…
+
+function Pesquisa() {
+    const [livrosPesquisados, setLivrosPesquisados] = useState([])
+    const [livros, setLivros] = useState([])
+
+    useEffect(() => {
+        const livrosDaAPI = getLivros()
+        setLivros(livrosdaAPI)
+    }, [])
+
+// código omitido…
+ 
+ ```
+
+Vamos tentar conectar o front com o back end  
+
+rode o comando
+
+```bash
+npm start
+```
+
+Teste se estamos conseguindo comunicar com a API (VAI DAR ERRADO)
+
+Note que Esse problema foi motivado por um conceito chamado **assincronismo** que é a diferença de tempo entre eventos.
+
+21)  Em service | livro.js ajuste a função get livro indicando que é uma função assincrona
+
+```livro.js
+import axios from "axios"
+
+const livrosAPI = axios.create({baseURL: "http://localhost:8000/livros"})
+
+async function getLivros() {
+    const response = await livrosAPI.get('/')
+
+    return response.data
+}
+
+export {
+    getLivros
+}
+```
+
+22) Retornando para components | Pesquisa | index.js  note que a função useEffect não lida bem com funções assícrona. ara isso, em uma nova linha, vamos criar uma async function chamada `fetchLivros()`. O termo `fetch` é a nomenclatura geralmente utilizada nesses casos para designar essa atualização. Vamos recortar com "Ctrl + X" as duas linhas que estão dentro da arrow function do primeiro parâmetro do useEffect.
+
+``` Pesquisa | index.js
+// código omitido…
+
+function Pesquisa() {
+    const [livrosPesquisados, setLivrosPesquisados] = useState([])
+    const [livros, setLivros] = useState([])
+
+    useEffect(() => {
+        fetchLivros()
+    }, [])
+
+    async function fetchLivros() {
+        const livrosDaAPI = await getLivros()
+        setLivros(livrosDaAPI)
+    }
+
+// código omitido…
+}
+
+```
+
+Teste novamente (VAI DAR ERRO)
+
+## Verificando logs
+Nesse momento, devemos aprender a verificar os logs. Onde podemos encontrar os logs na nossa aplicação para entender mensagens de erro ou ter indícios do que está acontecendo?
+
+Clique com o botão direito do mouse em qualquer lugar da página web e selecione "Inspecionar" (ou "F12"). Com isso, abre-se na parte direita uma coluna com o HTML da página, mas não é esse o nosso foco.
+
+Queremos ir em duas abas localizadas na parte superior quando testamos conexões com APIs: "Console" e "Network".
+
+No "Console", vão aparecer vários erros. O que nos interessa é o seguinte:
+
+`Acess to XMLHttpRequest at 'http://localhost:8000/livros/' localhost/:1 from origin 'http:localhost:3000' has been blocked by CORS policy: No 'Acess-Control-Allow-Origin' header is present on the requested resource.`
+
+
+O acesso à requisição na URL onde fica a nossa API que veio do nosso site no localhost:3000 foi bloqueado pela política da CORS (Cross-origin Resource Sharing).
+
+**Esse CORS é basicamente um sistema de segurança para que você controle quem pode fazer requisições para a sua API. Não configuramos isso na API, logo o localhost:3000 está bloqueado a fazer requisições para a nossa API por padrão do Express.**  
+
+23) ## Instalando CORS
+Backend
+
+```bash
+npm install cors
+```
+24) Em app.js ajuste para: 
+
+```
+//codigo omitido...
+import cors from 'cors'
+
+const app = express();
+app.use(express.json())
+app.use(cors({ origin: "*" }))
+//codigo omitido...
+```
+
+25) No input, vamos escrever "Liv". Aparecem os seguintes resultados:
+
+
+PALMAS DEU CERTO!!!!
+
+
+26) Analisando nosso site, o fluxo que faz mais sentido é acessar a home, buscar por um livro e adicioná-lo nos Favoritos. Depois, para visualizá-lo, acessar a página Favoritos.
+
+Para desenvolver esse fluxo a primeira coisa que faremos é voltar na nossa API. Criaremos uma nova rota de livros favoritos para podermos salvar, fazer inserções e edições.
+
+backend
+```livro.json
+[
+    {
+        "id": "1",
+        "nome": "As tranças do rei Careca"
+    },
+    {
+        "id": "2",
+        "nome": "Cale-se para não falar bobagem"
+    },
+    {
+        "id": "3",
+        "nome": "Já pensou em platar batata?"
+    },
+    {
+        "id": "4",
+        "nome": "Entendendo algoritmos"
+      },
+      {
+        "id": "5",
+        "nome": "Cangaceiro Javascript"
+      },
+      {
+        "id": "7",
+        "nome": "Guia básico de C#"
+      },
+      {
+        "id": "8",
+        "nome": "Guia básico de JavaScript"
+      },
+      {
+        "id": "9",
+        "nome": "Código Limpo"
+      },
+      {
+        "id": "10",
+        "nome": "JavaScript para iniciantes"
+      },
+      {
+        "id": "11",
+        "nome": "Conhecendo o python"
+      },
+      {
+        "id": "12",
+        "nome": "Imersão Senac"
+      }
+]
+```
+
+Crie um arquivo chamado `favoritos.json` e digite
+
+```favoritos.json
+[
+    {
+      "id": "4",
+      "nome": "Entendendo algoritmos"
+    }
+]
+```
+
+26) Em backend Services  crie um arquivo com o nome de `favoritosServices.js` e digite
+
+``` favoritosServices.js
+import fs from 'fs';
+
+function getTodosFavoritos() {
+    return JSON.parse(fs.readFileSync("favoritos.json"))
+}
+
+function deletaFavoritoPorId(id) {
+    const livros = JSON.parse(fs.readFileSync("favoritos.json"))
+
+    const livrosFiltrados = livros.filter(livro => livro.id !== id)
+    fs.writeFileSync("favoritos.json", JSON.stringify(livrosFiltrados))
+}
+
+function insereFavorito(id) {
+    const livros = JSON.parse(fs.readFileSync("livros.json"))
+    const favoritos = JSON.parse(fs.readFileSync("favoritos.json"))
+
+    const livroInserido = livros.find(livro => livro.id === id)
+    const novaListaDeLivrosFavoritos = [...favoritos, livroInserido]
+    fs.writeFileSync("favoritos.json", JSON.stringify(novaListaDeLivrosFavoritos))
+}
+
+export {
+    getTodosFavoritos,
+    deletaFavoritoPorId,
+    insereFavorito
+}
+
+```
+
+27) Em Controllers crie o arquivo favoritosController.js e digite
+
+
+```
+
+import { getTodosFavoritos, insereFavorito, deletaFavoritoPorId } from '../Services/favoritosServices.js'
+
+export const getFavoritos = (req, res) => {
+    try {
+        const livros = getTodosFavoritos()
+        res.send(livros)
+    } catch (error) {
+        res.status(500)
+        res.send(error.message)
+    } 
+}
+
+export const postFavorito = (req, res) => {
+    try {
+        const id = req.params.id
+        insereFavorito(id)
+        res.status(201)
+        res.send("Livro inserido com sucesso")
+    } catch(error) {
+        res.status(500)
+        res.send(error.message)
+    }
+}
+
+export const deleteFavorito = (req, res) => {
+    try {
+        const id = req.params.id
+
+        if(id && Number(id)) {
+            deletaFavoritoPorId(id)
+            res.send("Favorito deletado com sucesso")
+        } else {
+            res.status(422)
+            res.send("ID inválido")
+        }
+    } catch (error) {
+        res.status(500)
+        res.send(error.message)
+    } 
+}
+
+
+```
+
+28) Em routes crie um arquivo chamado `favoritosRoutes.js` e digite 
+
+``` favoritosRoutes.js
+import { getFavoritos, postFavorito, deleteFavorito } from '../Controllers/favoritosController.js';
+import { Router } from 'express';
+const router = Router();
+
+router.get('/', getFavoritos)
+router.post('/:id', postFavorito)
+router.delete('/:id', deleteFavorito)
+
+export default router;
+
+```
+
+29) Em app.js  ajuste para 
+
+
+```app.js
+import express from 'express';
+import routerLivro from './Routes/livroRoutes.js'
+import routerFavorito from './routes/favoritosRoutes.js'
+import cors from 'cors'
+
+
+const app = express();
+app.use(express.json())
+app.use(cors({ origin: "*" }))
+
+const port = 8000;
+
+// Montagem do roteador "livros"
+app.use('/livros', routerLivro);
+// Montagem do roteador "favoritos"
+app.use('/favoritos', routerFavorito);
+
+// Iniciar o servidor
+app.listen(port, () => {
+  console.log(`Aplicação escutando na porta ${port}`);
+});
+
+```
+
+###voltando ao front
+
+
+30) Em routes | **Favoritos.js** ajuste:
+
+  - Apague o componente Pesquisa
+  - Apague os imports não utilizados
+
+  ```
+  
+import styled from 'styled-components';
+
+const AppContainer = styled.div ` 
+//código omitido
+`
+
+function Favoritos() {
+  return (
+    <AppContainer>
+    </AppContainer>
+  );
+}
+
+export default Favoritos
+
+  ```
+
+31) Em services crie um arquivo chamado `favoritos.js` e digite
+
+```services | favoritos.js
+import axios from "axios"
+
+const favoritosAPI = axios.create({baseURL: "http://localhost:8000/favoritos"})
+
+async function getFavoritos() {
+        const response = await favoritosAPI.get('/')
+
+        return response.data
+
+}
+
+export {
+        getFavoritos
+}
+```
+
+32) Ajuste os estilos de routes | **Favoritos.js** para: 
+
+
+```Favoritos.js
+
+import { useEffect } from 'react';
+import { useState } from 'react';
+import styled from 'styled-components'
+import livroImg from '../img/livro.png'
+import {  getFavoritos } from '../services/favoritos.js';
+
+const AppContainer = styled.div`
+   width: 100vw;
+   height: 100vh;
+   background-image: linear-gradient(90deg,#002F52 35%,#326589 165%);
+`
+
+const ResultadoContainer = styled.div`
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+`
+
+const Resultado = styled.div`
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin: 20px 0;
+   cursor: pointer;
+   text-align: center;
+   padding: 0 100px;
+   p {
+       width: 200px;
+       color: #FFF;
+   }
+   img {
+       width: 100px;
+   }
+   &:hover {
+       border: 1px solid white;
+   }
+`
+
+const Titulo = styled.h2`
+   color: #FFF;
+   font-size: 36px;
+   text-align: center;
+   width: 100%;
+   padding-top: 35px
+`
+
+
+```
+
+
+
+32) Agora vamos ajustar a função para  **Favoritos.js** 
+
+```
+import { useEffect } from 'react';
+import { useState } from 'react';
+import styled from 'styled-components'
+import livroImg from '../img/livro.png'
+import {  getFavoritos } from '../services/favoritos.js';
+
+const AppContainer = styled.div`
+   width: 100vw;
+   height: 100vh;
+   background-image: linear-gradient(90deg,#002F52 35%,#326589 165%);
+`
+
+const ResultadoContainer = styled.div`
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+`
+
+const Resultado = styled.div`
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin: 20px 0;
+   cursor: pointer;
+   text-align: center;
+   padding: 0 100px;
+   p {
+       width: 200px;
+       color: #FFF;
+   }
+   img {
+       width: 100px;
+   }
+   &:hover {
+       border: 1px solid white;
+   }
+`
+
+const Titulo = styled.h2`
+   color: #FFF;
+   font-size: 36px;
+   text-align: center;
+   width: 100%;
+   padding-top: 35px
+`
+
+function Favoritos() {
+  const [favoritos, setFavoritos] = useState([])
+  useEffect(() => {
+    fetchFavoritos()
+  }, [])
+
+
+  async function fetchFavoritos() {
+    const favoritosDaAPI = await getFavoritos()
+    setFavoritos(favoritosDaAPI)
+  }
+
+  return (
+    <AppContainer>
+      <div>
+        <Titulo>Aqui estão seus livros favoritos:</Titulo>
+        <ResultadoContainer>
+          {
+            favoritos.length !== 0 ? favoritos.map(favorito => (
+              <Resultado>
+                <p>{favorito.nome}</p>
+                <img src={livroImg} />
+              </Resultado>
+            )) : null
+          }
+        </ResultadoContainer>
+      </div>
+    </AppContainer>
+  );
+}
+
+
+export default Favoritos
+```
+
+
+Teste

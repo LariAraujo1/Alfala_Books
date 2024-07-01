@@ -1,14 +1,24 @@
-import logo from '../../img/logo.svg'
-import './style.css'
+import logo from '../../img/logo.svg';
+import styled from 'styled-components';
 
-function Logo (){
+
+const LogoContainer = styled.div`
+display: flex;
+font-size: 30px;
+`
+const LogoImage = styled.img`
+margin-right: 10px;
+`
+
+function Logo () {
     return (
-    <div className='logo'>
-        <img src={logo} alt='Alfala logo'
-        className='logo-img'>
-            </img> 
-    <p> <strong> Alfala </strong>Books - A sua livraria digital</p>
-    </div>
+        <LogoContainer>
+            <LogoImage
+                src={logo} 
+                alt='Alfala books logo'>
+            </LogoImage>
+            <p> <strong>Alfala</strong>Books</p>
+      </LogoContainer>
     )
 }
 
